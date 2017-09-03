@@ -8,9 +8,10 @@ using Tinygubackend;
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    partial class TinyguContextModelSnapshot : ModelSnapshot
+    [Migration("20170903164905_AddDateCreatedToUserAndLink")]
+    partial class AddDateCreatedToUserAndLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1");

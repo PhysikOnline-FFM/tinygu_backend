@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Tinygubackend.Models
 {
-  public class User
+  public class User : Base
   {
-    public int Id { get; set; }
     public string Name { get; set; }
     public List<Link> Links { get; set; }
   }
