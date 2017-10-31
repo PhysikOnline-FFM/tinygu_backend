@@ -20,6 +20,23 @@ namespace Tinygubackend
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Indexed properties need to be restricted in length!
+            modelBuilder.Entity<Link>().HasIndex(l => l.ShortUrl).IsUnique();
+            modelBuilder.Entity<Link>(entity =>
+            {
+                entity.Property(l => l.ShortUrl).HasMaxLength(100);
+            });
+            modelBuilder.Entity<User>().HasIndex(u => u.Name).IsUnique();
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(u => u.Name).HasMaxLength(100);
+            });
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new CancellationToken())
         {
             AddTimeStamps();

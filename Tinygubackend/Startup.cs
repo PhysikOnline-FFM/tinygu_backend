@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
+
+#pragma warning disable 1591
 
 namespace Tinygubackend
 {
@@ -38,6 +36,11 @@ namespace Tinygubackend
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "Tinygu", Version = "v1" });
+
+        // Set the comments path for the Swagger JSON and UI.
+//        var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+//        var xmlPath = Path.Combine(basePath, "Tinygu.xml");
+//        c.IncludeXmlComments(xmlPath);
       });
     }
 

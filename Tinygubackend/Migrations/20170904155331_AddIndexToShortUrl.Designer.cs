@@ -8,9 +8,10 @@ using Tinygubackend;
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    partial class TinyguContextModelSnapshot : ModelSnapshot
+    [Migration("20170904155331_AddIndexToShortUrl")]
+    partial class AddIndexToShortUrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1");
@@ -46,13 +47,9 @@ namespace Tinygubackend.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(100);
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });

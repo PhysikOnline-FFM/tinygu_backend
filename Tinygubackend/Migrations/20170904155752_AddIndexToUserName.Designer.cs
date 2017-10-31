@@ -8,9 +8,10 @@ using Tinygubackend;
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    partial class TinyguContextModelSnapshot : ModelSnapshot
+    [Migration("20170904155752_AddIndexToUserName")]
+    partial class AddIndexToUserName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1");

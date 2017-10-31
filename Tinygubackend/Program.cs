@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
+#pragma warning disable 1591
+
 namespace Tinygubackend
 {
   public class Program

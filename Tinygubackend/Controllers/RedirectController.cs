@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,34 +13,49 @@ namespace Tinygubackend.Controllers
     {
       _tinyguContext = tinyguContext;
     }
-    
+
+    /// <summary>
+    /// Redirect to a longUrl.
+    /// </summary>
+    /// <param name="shortUrl"></param>
+    /// <returns></returns>
     [HttpGet("redirect/{shortUrl}")]
     public IActionResult RedirectToUrl(string shortUrl)
     {
-      var query = _tinyguContext.Links.Where(l => l.ShortUrl == shortUrl);
-      int count = query.Count();
-      if (count == 1)
+      try
       {
-        string longUrl = query.First().LongUrl;
+        // throws if no entry was found
+        var query = _tinyguContext.Links.First(l => l.ShortUrl == shortUrl);
+
+        string longUrl = query.LongUrl;
         if (!longUrl.Contains("http://") && !longUrl.Contains("https://"))
         {
           longUrl = "http://" + longUrl;
         }
         return Redirect(longUrl);
       }
-      if (count == 0)
+      catch (InvalidOperationException e)
       {
-        HttpContext.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+        SetHttpStatusCode(HttpStatusCode.BadRequest);
         return Json(new
         {
-          error = $"No LongUrl wit ShortUrl '{shortUrl}' found!"
+          error = $"No Url with shortUrl '{shortUrl}'",
+          details = e.Message
         });
       }
-      HttpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-      return Json(new
+      catch (Exception e)
       {
-        error = $"Duplicate entry with ShortUrl '{shortUrl}'!"
-      });
+        SetHttpStatusCode(HttpStatusCode.InternalServerError);
+        return Json(new
+        {
+          error = e.Message
+        });
+      }
+    }
+
+    private void SetHttpStatusCode(HttpStatusCode code)
+    {
+      HttpContext.Response.StatusCode = (int)code;
     }
   }
 }
