@@ -10,7 +10,7 @@ using Tinygubackend.Models;
 
 namespace Tinygubackend
 {
-    public partial class TinyguContext : DbContext
+    public class TinyguContext : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Link> Links { get; set; }
