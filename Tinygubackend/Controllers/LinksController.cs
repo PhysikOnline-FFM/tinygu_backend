@@ -32,19 +32,69 @@ namespace Tinygubackend.Controllers
         /// <summary>
         /// Returns one link.
         /// </summary>
-        /// <param name="shortUrl"></param>
-        /// <returns></returns>
-        [HttpGet("{shortUrl}")]
-        public IActionResult OneLink(string shortUrl)
+        /// <param name="id">Id of this Link</param>
+        /// <returns>The requested link</returns>
+        [HttpGet("{id}")]
+        public IActionResult OneLink(int id)
         {
-            return Json(_tinyguContext.Links.Where(l => l.ShortUrl == shortUrl));
+            Link link = _tinyguContext.Links.SingleOrDefault(l => l.Id == id);
+
+            if (link == null)
+            {
+                return StatusCode(400);
+            }
+
+            return Json(link);
+        }
+
+        /// <summary>
+        /// Updates one link.
+        /// </summary>
+        /// <param name="updatedLink"></param>
+        /// <param name="id">Id of this Link</param>
+        /// <returns>The updated Link</returns>
+        [HttpPut("{id}")]
+        public IActionResult UpdateLink([FromBody] Link updatedLink, int id)
+        {
+            try
+            {
+                Link link = _tinyguContext.Links.SingleOrDefault(_ => _.Id == id);
+
+                if (link == null)
+                {
+                    return StatusCode(400);
+                }
+
+                link.ShortUrl = updatedLink.ShortUrl;
+                link.LongUrl = updatedLink.LongUrl;
+                link.Owner = updatedLink.Owner;
+
+                _tinyguContext.SaveChanges();
+                return Json(link);
+            }
+            catch (DbUpdateException e)
+            {
+                SetHttpStatusCode(HttpStatusCode.InternalServerError);
+                return Json(new
+                {
+                    error = e.InnerException.Message
+                });
+            }
+            catch (Exception e)
+            {
+                SetHttpStatusCode(HttpStatusCode.InternalServerError);
+                return Json(new
+                {
+                    error = e.Message
+                });
+            }
         }
 
         /// <summary>
         /// Create one link.
         /// </summary>
-        /// <param name="newLink"></param>
-        /// <returns></returns>
+        /// <param name="newLink">The link to be created</param>
+        /// <returns>The link</returns>
         [HttpPost]
         public IActionResult CreateLink([FromBody] Link newLink)
         {
@@ -52,7 +102,44 @@ namespace Tinygubackend.Controllers
             {
                 _tinyguContext.Links.Add(newLink);
                 _tinyguContext.SaveChanges();
-                return Content("Success");
+                return Json(newLink);
+            }
+            catch (DbUpdateException e)
+            {
+                SetHttpStatusCode(HttpStatusCode.InternalServerError);
+                return Json(new
+                {
+                    error = e.InnerException.Message
+                });
+            }
+            catch (Exception e)
+            {
+                SetHttpStatusCode(HttpStatusCode.InternalServerError);
+                return Json(new
+                {
+                    error = e.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// Deletes one link.
+        /// </summary>
+        /// <param name="id">Id of this Link</param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public IActionResult DeleteLink(int id)
+        {
+            try
+            {
+                Link link = _tinyguContext.Links.SingleOrDefault(_ => _.Id == id);
+                if (link == null)
+                {
+                    return StatusCode(400);
+                }
+                _tinyguContext.Links.Remove(link);
+                _tinyguContext.SaveChanges();
+                return StatusCode(200);
             }
             catch (DbUpdateException e)
             {

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.IO;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -38,9 +40,10 @@ namespace Tinygubackend
         c.SwaggerDoc("v1", new Info { Title = "Tinygu", Version = "v1" });
 
         // Set the comments path for the Swagger JSON and UI.
-//        var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-//        var xmlPath = Path.Combine(basePath, "Tinygu.xml");
-//        c.IncludeXmlComments(xmlPath);
+        var basePath = AppContext.BaseDirectory;
+        Console.WriteLine(basePath);
+        var xmlPath = Path.Combine(basePath, "Tinygu.xml");
+        c.IncludeXmlComments(xmlPath);
       });
     }
 

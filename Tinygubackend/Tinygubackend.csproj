@@ -23,6 +23,6 @@
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <!--<DocumentationFile>bin\Debug\netcoreapp1.1\Tinygu.xml</DocumentationFile>-->
+    <DocumentationFile>bin\Debug\netcoreapp1.1\Tinygu.xml</DocumentationFile>
   </PropertyGroup>
 </Project>
