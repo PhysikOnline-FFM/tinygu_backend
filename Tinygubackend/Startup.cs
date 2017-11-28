@@ -34,6 +34,11 @@ namespace Tinygubackend
       services.AddMvc();
       services.AddDbContext<TinyguContext>(options =>
         options.UseMySql(Configuration.GetConnectionString("Tinygu")));
+      
+      services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .AllowAnyHeader()));
 
       // Register the Swagger generator, defining one or more Swagger documents
       services.AddSwaggerGen(c =>
