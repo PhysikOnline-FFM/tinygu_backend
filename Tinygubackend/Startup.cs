@@ -67,6 +67,8 @@ namespace Tinygubackend
       {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tinygu V1");
       });
+      
+      app.UseCors("AllowAll");
 
       app.UseMvc();
     }
