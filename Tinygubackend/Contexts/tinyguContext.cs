@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Tinygubackend.Models;
 
-namespace Tinygubackend
+namespace Tinygubackend.Contexts
 {
     public class TinyguContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
-        public DbSet<Link> Links { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Link> Links { get; set; }
 
         public TinyguContext(DbContextOptions<TinyguContext> options)
             : base(options)

@@ -1,20 +1,38 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.0.0
 MinimumVisualStudioVersion = 10.0.0.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinygubackend", "Tinygubackend/Tinygubackend.csproj", "{69C9D5F9-B10F-4014-A533-32140226932D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinygubackend", "Tinygubackend\Tinygubackend.csproj", "{69C9D5F9-B10F-4014-A533-32140226932D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{875CC6E1-6665-4D6B-A90D-B3687875ED29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{69C9D5F9-B10F-4014-A533-32140226932D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{69C9D5F9-B10F-4014-A533-32140226932D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C9D5F9-B10F-4014-A533-32140226932D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69C9D5F9-B10F-4014-A533-32140226932D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Debug|x64.ActiveCfg = Debug|x64
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Debug|x64.Build.0 = Debug|x64
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Debug|x86.ActiveCfg = Debug|x86
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Debug|x86.Build.0 = Debug|x86
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Release|x64.ActiveCfg = Release|x64
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Release|x64.Build.0 = Release|x64
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Release|x86.ActiveCfg = Release|x86
+		{875CC6E1-6665-4D6B-A90D-B3687875ED29}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

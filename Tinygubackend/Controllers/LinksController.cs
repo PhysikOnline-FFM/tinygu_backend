@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,17 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tinygubackend;
 using Tinygubackend.Models;
+using Tinygubackend.Services;
 
 namespace Tinygubackend.Controllers
 {
     [Route("/api/v1/links/")]
     public class LinksController : Controller
     {
-        private TinyguContext _tinyguContext;
+        private readonly ILinksService _linksService;
 
-        public LinksController(TinyguContext tinyguContext)
+        public LinksController(ILinksService linksService)
         {
-            _tinyguContext = tinyguContext;
+            _linksService = linksService;
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace Tinygubackend.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return Json(_tinyguContext.Links.ToList());
+            return Json(_linksService.GetAll());
         }
 
         /// <summary>
@@ -38,14 +40,14 @@ namespace Tinygubackend.Controllers
         [HttpGet("{id}")]
         public IActionResult OneLink(int id)
         {
-            Link link = _tinyguContext.Links.SingleOrDefault(l => l.Id == id);
-
-            if (link == null)
+            try
+            {
+                return Json(_linksService.GetSingle(id));
+            }
+            catch (KeyNotFoundException e)
             {
                 return StatusCode(400);
             }
-
-            return Json(link);
         }
 
         /// <summary>
@@ -59,35 +61,21 @@ namespace Tinygubackend.Controllers
         {
             try
             {
-                Link link = _tinyguContext.Links.SingleOrDefault(_ => _.Id == id);
-
-                if (link == null)
-                {
-                    return StatusCode(400);
-                }
-
-                link.ShortUrl = updatedLink.ShortUrl;
-                link.LongUrl = updatedLink.LongUrl;
-                link.Owner = updatedLink.Owner;
-
-                _tinyguContext.SaveChanges();
-                return Json(link);
+                return Json(_linksService.UpdateOne(id, updatedLink));
+            }
+            catch (KeyNotFoundException e)
+            {
+                return StatusCode(400);
             }
             catch (DbUpdateException e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
-                return Json(new
-                {
-                    error = e.InnerException.Message
-                });
+                return Json(ErrorMessage(e.InnerException.Message));
             }
             catch (Exception e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
-                return Json(new
-                {
-                    error = e.Message
-                });
+                return Json(ErrorMessage(e.Message));
             }
         }
 
@@ -101,25 +89,17 @@ namespace Tinygubackend.Controllers
         {
             try
             {
-                _tinyguContext.Links.Add(newLink);
-                _tinyguContext.SaveChanges();
-                return Json(newLink);
+                return Json(_linksService.CreateOne(newLink));
             }
             catch (DbUpdateException e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
-                return Json(new
-                {
-                    error = e.InnerException.Message
-                });
+                return Json(ErrorMessage(e.InnerException.Message));
             }
             catch (Exception e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
-                return Json(new
-                {
-                    error = e.Message
-                });
+                return Json(ErrorMessage(e.Message));
             }
         }
 
@@ -133,36 +113,33 @@ namespace Tinygubackend.Controllers
         {
             try
             {
-                Link link = _tinyguContext.Links.SingleOrDefault(_ => _.Id == id);
-                if (link == null)
-                {
-                    return StatusCode(400);
-                }
-                _tinyguContext.Links.Remove(link);
-                _tinyguContext.SaveChanges();
+                _linksService.DeleteOne(id);
                 return StatusCode(200);
+            }
+            catch (KeyNotFoundException e)
+            {
+                return StatusCode(400);
             }
             catch (DbUpdateException e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
-                return Json(new
-                {
-                    error = e.InnerException.Message
-                });
+                return Json(ErrorMessage(e.InnerException.Message));
             }
             catch (Exception e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
-                return Json(new
-                {
-                    error = e.Message
-                });
+                return Json(ErrorMessage(e.Message));
             }
         }
 
         private void SetHttpStatusCode(HttpStatusCode code)
         {
             HttpContext.Response.StatusCode = (int)code;
+        }
+
+        private object ErrorMessage(string error)
+        {
+            return new {error};
         }
     }
 }

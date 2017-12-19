@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using Tinygubackend;
+using Tinygubackend.Contexts;
+using Tinygubackend.Models;
+using Tinygubackend.Services;
 
 #pragma warning disable 1591
 
@@ -34,7 +37,9 @@ namespace Tinygubackend
       services.AddMvc();
       services.AddDbContext<TinyguContext>(options =>
         options.UseMySql(Configuration.GetConnectionString("Tinygu")));
-      
+
+      services.AddTransient<ILinksService, LinksService>();
+
       services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowCredentials()
@@ -67,7 +72,7 @@ namespace Tinygubackend
       {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tinygu V1");
       });
-      
+
       app.UseCors("AllowAll");
 
       app.UseMvc();

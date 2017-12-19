@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Tinygubackend;
+using Tinygubackend.Contexts;
 
 namespace Tinygubackend.Migrations
 {
