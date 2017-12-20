@@ -63,6 +63,10 @@ namespace Tinygubackend.Infrastructure
 
         public Link CreateOne(Link newLink)
         {
+            if (newLink.ShortUrl == null || newLink.LongUrl == null) 
+            {
+                throw new PropertyIsMissingException();
+            }
             _tinyguContext.Links.Add(newLink);
             _tinyguContext.SaveChanges();
             return newLink;

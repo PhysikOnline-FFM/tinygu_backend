@@ -39,36 +39,6 @@ namespace UnitTests.Infrastructure
             },
         };
 
-        private Link _updateLink = new Link
-        {
-            LongUrl = "test",
-            ShortUrl = "test",
-            Owner = null,
-            Id = 2,
-        };
-
-        private Link _updateLink_wrongId = new Link
-        {
-            LongUrl = "test",
-            ShortUrl = "test",
-            Owner = null,
-            Id = 4,
-        };
-
-        private Link _updateLink_missingUrl = new Link
-        {
-            LongUrl = "test",
-            Owner = null,
-            Id = 2,
-        };
-
-        private Link _newLink = new Link
-        {
-            LongUrl = "test",
-            ShortUrl = "test",            
-            Owner = null,
-        };
-
         private TinyguContext GetContext(string databaseName)
         {
             var options = new DbContextOptionsBuilder<TinyguContext>()
@@ -123,7 +93,8 @@ namespace UnitTests.Infrastructure
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
-                Action act = () => service.GetSingle(4);
+                Console.WriteLine(context.Links.Count());
+                Action act = () => service.GetSingle(context.Links.Last().Id + 1);
                 act.ShouldThrow<IdNotFoundException>();
             }
         }
@@ -134,17 +105,24 @@ namespace UnitTests.Infrastructure
             string name = "Update_Single_Link";
             PopulateDB(name);
 
+            Link updateLink = new Link
+            {
+                LongUrl = "test",
+                ShortUrl = "test",
+                Owner = null,
+            };
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
-                var link = service.UpdateOne(_updateLink);
-                link.ShouldBeEquivalentTo(_updateLink, options =>
+                updateLink.Id = context.Links.Last().Id;
+                var link = service.UpdateOne(updateLink);
+                link.ShouldBeEquivalentTo(updateLink, options =>
                     options.Excluding(o => o.DateCreated));
             }
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
-                service.GetSingle(2).ShouldBeEquivalentTo(_updateLink, options =>
+                service.GetSingle(updateLink.Id).ShouldBeEquivalentTo(updateLink, options =>
                     options.Excluding(o => o.DateCreated));
             }
         }
@@ -154,18 +132,22 @@ namespace UnitTests.Infrastructure
         {
             string name = "Update_Single_Throws";
             PopulateDB(name);
+            Link updateLink = new Link
+            {
+                LongUrl = "test",
+                ShortUrl = "test",
+                Owner = null,
+            };
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
-                Action act_wrongId = () => service.UpdateOne(_updateLink_wrongId);
+                updateLink.Id = context.Links.Last().Id + 1;
+                Action act_wrongId = () => service.UpdateOne(updateLink);
                 act_wrongId.ShouldThrow<IdNotFoundException>();
-                Action act_missingUrl = () => service.UpdateOne(_updateLink_missingUrl);
+                updateLink.Id = context.Links.Last().Id;
+                updateLink.ShortUrl = null;
+                Action act_missingUrl = () => service.UpdateOne(updateLink);
                 act_missingUrl.ShouldThrow<PropertyIsMissingException>();
-            }
-            using (var context = GetContext(name))
-            {
-                var service = new LinksRepository(context);
-                service.GetAll().Count.Should().Be(_data.Count);
             }
         }
 
@@ -175,19 +157,82 @@ namespace UnitTests.Infrastructure
             string name = "Create_Single_Link";
             PopulateDB(name);
 
+            Link newLink = new Link
+            {
+                LongUrl = "test",
+                ShortUrl = "test",            
+                Owner = null,
+            };
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
-                var link = service.CreateOne(_newLink);
-                link.ShouldBeEquivalentTo(_newLink, options =>
+                var link = service.CreateOne(newLink);
+                link.ShouldBeEquivalentTo(newLink, options =>
                     options.Excluding(o => o.DateCreated).Excluding(o => o.Id));
             }
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
                 service.GetAll().Count.Should().Be(_data.Count + 1);
-                service.GetSingle(4).ShouldBeEquivalentTo(_updateLink, options =>
+                service.GetSingle(context.Links.Last().Id).ShouldBeEquivalentTo(newLink, options =>
                     options.Excluding(o => o.DateCreated).Excluding(o => o.Id));
+            }
+        }
+
+        [Fact]
+        public void CreateSingle_Throws()
+        {
+            string name = "Create_Single_Throws";
+            PopulateDB(name);
+
+            Link newLink = new Link
+            {
+                LongUrl = "test",
+                ShortUrl = "test",            
+                Owner = null,
+            };
+            using (var context = GetContext(name))
+            {
+                var service = new LinksRepository(context);
+                newLink.ShortUrl = null;
+                Action act = () => service.CreateOne(newLink);
+                act.ShouldThrow<PropertyIsMissingException>();
+            }
+        }
+        [Fact]
+        public void DeleteSingleLink()
+        {
+            string name = "Delete_Single_Link";
+            PopulateDB(name);
+
+            using (var context = GetContext(name))
+            {
+                var service = new LinksRepository(context);
+                service.DeleteOne(context.Links.Last().Id);
+            }
+
+            using (var context = GetContext(name))
+            {
+                context.Links.Count().Should().Be(_data.Count - 1);
+            }
+        }
+
+        [Fact]
+        public void DeleteSingle_Throws()
+        {
+            string name = "Delete_Single_Throws";
+            PopulateDB(name);
+
+            using (var context = GetContext(name))
+            {
+                var service = new LinksRepository(context);
+                Action act = () => service.DeleteOne(context.Links.Last().Id + 1);
+                act.ShouldThrow<IdNotFoundException>();
+            }
+
+            using (var context = GetContext(name))
+            {
+                context.Links.Count().Should().Be(_data.Count);
             }
         }
     }
