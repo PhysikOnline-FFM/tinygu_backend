@@ -32,6 +32,11 @@ namespace Tinygubackend.Infrastructure
             return _tinyguContext.Links.ToList();
         }
 
+        /// <summary>
+        /// Get one Link from DB.
+        /// </summary>
+        /// <param name="id">Id of the target Link.</param>
+        /// <returns>Link</returns>
         public Link GetSingle(int id)
         {
             Link link = _tinyguContext.Links.SingleOrDefault(_ => _.Id == id);
@@ -42,6 +47,11 @@ namespace Tinygubackend.Infrastructure
             return link;
         }
 
+        /// <summary>
+        /// Updates a singe Link.
+        /// </summary>
+        /// <param name="updatedLink">Link to upgrade from.</param>
+        /// <returns>Updated Link.</returns>
         public Link UpdateOne(Link updatedLink)
         {
             int id = updatedLink.Id;
@@ -50,7 +60,7 @@ namespace Tinygubackend.Infrastructure
             {
                 throw new IdNotFoundException();
             }
-            if (updatedLink.ShortUrl == null || updatedLink.LongUrl == null) 
+            if (updatedLink.ShortUrl == null || updatedLink.LongUrl == null)
             {
                 throw new PropertyIsMissingException();
             }
@@ -61,9 +71,14 @@ namespace Tinygubackend.Infrastructure
             return oldLink;
         }
 
+        /// <summary>
+        /// Creates a single Link.
+        /// </summary>
+        /// <param name="newLink">New Link.</param>
+        /// <returns>Newly created Link.</returns>
         public Link CreateOne(Link newLink)
         {
-            if (newLink.ShortUrl == null || newLink.LongUrl == null) 
+            if (newLink.ShortUrl == null || newLink.LongUrl == null)
             {
                 throw new PropertyIsMissingException();
             }
@@ -72,6 +87,10 @@ namespace Tinygubackend.Infrastructure
             return newLink;
         }
 
+        /// <summary>
+        /// Delete a Link by Id.
+        /// </summary>
+        /// <param name="id">Id to delete.</param>
         public void DeleteOne(int id)
         {
             Link link = _tinyguContext.Links.SingleOrDefault(_ => _.Id == id);

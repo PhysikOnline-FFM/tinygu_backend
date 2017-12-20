@@ -50,7 +50,8 @@ namespace Tinygubackend.Controllers
             }
             catch (IdNotFoundException e)
             {
-                return StatusCode(400);
+                SetHttpStatusCode(HttpStatusCode.BadRequest);
+                return Json(ErrorMessage(e.Message));
             }
         }
 
@@ -69,7 +70,8 @@ namespace Tinygubackend.Controllers
             }
             catch (Exception e) when (e is IdNotFoundException || e is PropertyIsMissingException)
             {
-                return StatusCode(400);
+                SetHttpStatusCode(HttpStatusCode.BadRequest);
+                return Json(ErrorMessage(e.Message));
             }
             catch (DbUpdateException e)
             {
@@ -122,7 +124,8 @@ namespace Tinygubackend.Controllers
             }
             catch (KeyNotFoundException e)
             {
-                return StatusCode(400);
+                SetHttpStatusCode(HttpStatusCode.BadRequest);
+                return Json(ErrorMessage(e.Message));
             }
             catch (DbUpdateException e)
             {
