@@ -10,7 +10,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Tinygubackend;
 using Tinygubackend.Contexts;
 using Tinygubackend.Models;
-using Tinygubackend.Services;
+using Tinygubackend.Infrastructure;
 
 #pragma warning disable 1591
 
@@ -38,7 +38,7 @@ namespace Tinygubackend
       services.AddDbContext<TinyguContext>(options =>
         options.UseMySql(Configuration.GetConnectionString("Tinygu")));
 
-      services.AddTransient<ILinksService, LinksService>();
+      services.AddTransient<ILinksRepository, LinksRepository>();
 
       services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
         .AllowAnyMethod()

@@ -8,16 +8,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tinygubackend;
 using Tinygubackend.Models;
-using Tinygubackend.Services;
+using Tinygubackend.Infrastructure;
+using Tinygubackend.Core.Exceptions;
 
 namespace Tinygubackend.Controllers
 {
+    /// <summary>
+    /// Handles Routes related to link operations.
+    /// </summary>
     [Route("/api/v1/links/")]
     public class LinksController : Controller
     {
-        private readonly ILinksService _linksService;
+        private readonly ILinksRepository _linksService;
 
-        public LinksController(ILinksService linksService)
+        public LinksController(ILinksRepository linksService)
         {
             _linksService = linksService;
         }
@@ -44,7 +48,7 @@ namespace Tinygubackend.Controllers
             {
                 return Json(_linksService.GetSingle(id));
             }
-            catch (KeyNotFoundException e)
+            catch (IdNotFoundException e)
             {
                 return StatusCode(400);
             }
@@ -61,9 +65,9 @@ namespace Tinygubackend.Controllers
         {
             try
             {
-                return Json(_linksService.UpdateOne(id, updatedLink));
+                return Json(_linksService.UpdateOne(updatedLink));
             }
-            catch (KeyNotFoundException e)
+            catch (Exception e) when (e is IdNotFoundException || e is PropertyIsMissingException)
             {
                 return StatusCode(400);
             }

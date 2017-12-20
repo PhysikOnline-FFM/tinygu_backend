@@ -1,27 +1,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using Tinygubackend.Contexts;
+using Tinygubackend.Core.Exceptions;
 using Tinygubackend.Models;
 
-namespace Tinygubackend.Services
+namespace Tinygubackend.Infrastructure
 {
-    public interface ILinksService
+    public interface ILinksRepository
     {
         List<Link> GetAll();
         Link GetSingle(int id);
-        Link UpdateOne(int id, Link updatedLink);
+        Link UpdateOne(Link updatedLink);
         Link CreateOne(Link newLink);
         void DeleteOne(int id);
     }
-    public class LinksService : ILinksService
+    public class LinksRepository : ILinksRepository
     {
         private readonly TinyguContext _tinyguContext;
 
-        public LinksService(TinyguContext tinyguContext)
+        public LinksRepository(TinyguContext tinyguContext)
         {
             _tinyguContext = tinyguContext;
         }
 
+        /// <summary>
+        /// Get all Links in DB.
+        /// </summary>
+        /// <returns>List of all Links.</returns>
         public List<Link> GetAll()
         {
             return _tinyguContext.Links.ToList();
@@ -32,17 +37,22 @@ namespace Tinygubackend.Services
             Link link = _tinyguContext.Links.SingleOrDefault(_ => _.Id == id);
             if (link == null)
             {
-                throw new KeyNotFoundException($"Could not find link with id {id}!");
+                throw new IdNotFoundException();
             }
             return link;
         }
 
-        public Link UpdateOne(int id, Link updatedLink)
+        public Link UpdateOne(Link updatedLink)
         {
+            int id = updatedLink.Id;
             Link oldLink = GetSingle(id);
             if (oldLink == null)
             {
-                throw new KeyNotFoundException($"Could not find link with id {id}!");
+                throw new IdNotFoundException();
+            }
+            if (updatedLink.ShortUrl == null || updatedLink.LongUrl == null) 
+            {
+                throw new PropertyIsMissingException();
             }
             oldLink.ShortUrl = updatedLink.ShortUrl;
             oldLink.LongUrl = updatedLink.LongUrl;
@@ -63,7 +73,7 @@ namespace Tinygubackend.Services
             Link link = _tinyguContext.Links.SingleOrDefault(_ => _.Id == id);
             if (link == null)
             {
-                throw new KeyNotFoundException($"Could not find link with id {id}!");
+                throw new IdNotFoundException();
             }
             _tinyguContext.Links.Remove(link);
             _tinyguContext.SaveChanges();

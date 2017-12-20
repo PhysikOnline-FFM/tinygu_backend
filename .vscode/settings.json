@@ -1,0 +1,10 @@
+{
+    "dotnet-test-explorer.testProjectPath": "./UnitTests",
+    "spellright.language": "en_US",
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext",
+        "csharp"
+    ]
+}
