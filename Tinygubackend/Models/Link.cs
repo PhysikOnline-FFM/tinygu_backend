@@ -1,4 +1,6 @@
-﻿namespace Tinygubackend.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Tinygubackend.Models
 {
     public class Link : Base
     {
