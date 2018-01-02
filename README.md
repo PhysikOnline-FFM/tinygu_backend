@@ -1,5 +1,7 @@
 # Backend for tinygu 2.0
 
+[![Build status](https://ci.appveyor.com/api/projects/status/v49wr1smusto73j4?svg=true)](https://ci.appveyor.com/project/Larsg7/tinygu-backend) [![Build status](https://ci.appveyor.com/api/projects/status/v49wr1smusto73j4/branch/master?svg=true)](https://ci.appveyor.com/project/Larsg7/tinygu-backend/branch/master)
+
 ## Installation
 
 * .Net Core 2.0 SDK
