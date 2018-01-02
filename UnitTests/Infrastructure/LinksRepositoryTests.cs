@@ -26,7 +26,7 @@ namespace UnitTests.Infrastructure
             new Link
             {
                 LongUrl = "google.com2",
-                ShortUrl = "g2",
+                    ShortUrl = "g2",
                 Owner = null,
                 DateCreated = DateTime.Parse("2017-11-08T12:07:55.323428")
             },
@@ -194,7 +194,7 @@ namespace UnitTests.Infrastructure
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
-                newLink.ShortUrl = null;
+                newLink.LongUrl = null;
                 Action act = () => service.CreateOne(newLink);
                 act.ShouldThrow<PropertyIsMissingException>();
             }
