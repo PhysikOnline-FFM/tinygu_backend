@@ -54,7 +54,7 @@ namespace Tinygubackend
         var basePath = AppContext.BaseDirectory;
         Console.WriteLine(basePath);
         var xmlPath = Path.Combine(basePath, "Tinygu.xml");
-        c.IncludeXmlComments(xmlPath);
+        //c.IncludeXmlComments(xmlPath);
       });
     }
 

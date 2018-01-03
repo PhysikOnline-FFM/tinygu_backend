@@ -78,7 +78,7 @@ namespace Tinygubackend.Infrastructure
         /// <returns>Newly created Link.</returns>
         public Link CreateOne(Link newLink)
         {
-            if (newLink.ShortUrl == null || newLink.LongUrl == null)
+            if (newLink.LongUrl == null)
             {
                 throw new PropertyIsMissingException();
             }
