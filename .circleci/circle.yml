@@ -12,3 +12,6 @@ jobs:
       - run: dotnet restore
       - run: dotnet test UnitTests
       - run: dotnet build Tinygubackend
+      - run: git remote add dokku dokku@poc3.itp.uni-frankfurt.de:tinygu-staging-api
+      - run: git push dokku master
+    
