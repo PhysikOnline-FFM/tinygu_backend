@@ -213,7 +213,7 @@ namespace UnitTests.Infrastructure
         [Fact]
         public void GenerateRandomShortLink()
         {
-            string name = "Create_Single_Throws";
+            string name = "GenerateRandomShortLink";
             PopulateDB(name);
 
             using (var context = GetContext(name))
