@@ -9,10 +9,9 @@ RUN dotnet restore
 COPY . ./
 RUN dotnet publish -c Release -o out
 
-ENV ASPNETCORE_ENVIRONMENT=Development
-
 # Build runtime image
 FROM microsoft/aspnetcore:2.0
+ENV ASPNETCORE_ENVIRONMENT=Development
 WORKDIR /app
 COPY --from=build-env /app/Tinygubackend/out .
 ENTRYPOINT ["dotnet", "Tinygubackend.dll"]
