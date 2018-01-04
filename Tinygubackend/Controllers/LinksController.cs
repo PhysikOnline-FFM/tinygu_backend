@@ -31,7 +31,7 @@ namespace Tinygubackend.Controllers
         /// </summary>
         /// <returns>List</returns>
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult GetAll()
         {
             return Json(_linksService.GetAll());
         }
@@ -50,7 +50,11 @@ namespace Tinygubackend.Controllers
             }
             catch (IdNotFoundException e)
             {
-                SetHttpStatusCode(HttpStatusCode.BadRequest);
+                return BadRequest(ErrorMessage(e.Message));
+            }
+            catch (Exception e)
+            {
+                SetHttpStatusCode(HttpStatusCode.InternalServerError);
                 return Json(ErrorMessage(e.Message));
             }
         }
@@ -127,7 +131,7 @@ namespace Tinygubackend.Controllers
                 _linksService.DeleteOne(id);
                 return StatusCode(200);
             }
-            catch (KeyNotFoundException e)
+            catch (IdNotFoundException e)
             {
                 SetHttpStatusCode(HttpStatusCode.BadRequest);
                 return Json(ErrorMessage(e.Message));
