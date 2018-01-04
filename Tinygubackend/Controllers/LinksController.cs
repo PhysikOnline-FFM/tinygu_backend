@@ -102,6 +102,11 @@ namespace Tinygubackend.Controllers
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
                 return Json(ErrorMessage(e.InnerException.Message));
             }
+            catch (DuplicateEntryException e)
+            {
+                SetHttpStatusCode(HttpStatusCode.BadRequest);
+                return Json(ErrorMessage(e.Message));
+            }
             catch (Exception e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
