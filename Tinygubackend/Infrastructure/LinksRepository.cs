@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tinygubackend.Contexts;
@@ -14,13 +15,28 @@ namespace Tinygubackend.Infrastructure
         Link CreateOne(Link newLink);
         void DeleteOne(int id);
     }
+
+    public interface IRandomGenerator
+    {
+        int Next(int a, int b);
+    }
     public class LinksRepository : ILinksRepository
     {
         private readonly TinyguContext _tinyguContext;
+        private readonly IRandomGenerator _random;
 
-        public LinksRepository(TinyguContext tinyguContext)
+        private class DefaultRandom : IRandomGenerator
+        {
+            public int Next(int a, int b) 
+            {
+                return (new Random()).Next(a, b);
+            }
+        }
+
+        public LinksRepository(TinyguContext tinyguContext, IRandomGenerator random = null)
         {
             _tinyguContext = tinyguContext;
+            _random = random?? new DefaultRandom();
         }
 
         /// <summary>
@@ -78,14 +94,49 @@ namespace Tinygubackend.Infrastructure
         /// <returns>Newly created Link.</returns>
         public Link CreateOne(Link newLink)
         {
-            if (newLink.LongUrl == null)
+            if (string.IsNullOrEmpty(newLink.LongUrl))
             {
                 throw new PropertyIsMissingException();
+            }
+            if (DoesShortUrlAlreadyExists(newLink.ShortUrl))
+            {
+                throw new DuplicateEntryException();
+            }
+            if (string.IsNullOrEmpty(newLink.ShortUrl))
+            {
+                newLink.ShortUrl = GetRandomShortUrl();
             }
             _tinyguContext.Links.Add(newLink);
             _tinyguContext.SaveChanges();
             return newLink;
         }
+
+        private bool DoesShortUrlAlreadyExists(string shortUrl)
+        {
+            return _tinyguContext.Links.SingleOrDefault(_ => _.ShortUrl == shortUrl) != null;
+        }
+
+        private string GetRandomShortUrl()
+        {
+            const string letters = "abcdefghkmnpqrstuvwxyz23456789";
+            int length = 3;
+            int numLetters = letters.Length;
+            string result;
+            do
+            {
+                result = "";
+                for (int i = 0; i < length; i++)
+                {
+                    char c = letters[_random.Next(0, numLetters)];
+                    result += c;
+                }
+                length++;
+            } while (DoesShortUrlAlreadyExists(result));
+            
+            return result;
+        }
+
+
 
         /// <summary>
         /// Delete a Link by Id.

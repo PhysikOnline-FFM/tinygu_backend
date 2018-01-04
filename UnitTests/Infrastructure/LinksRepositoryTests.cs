@@ -12,6 +12,13 @@ using Tinygubackend.Core.Exceptions;
 
 namespace UnitTests.Infrastructure
 {
+    public class MockRandom : IRandomGenerator
+    {
+        public int Next(int a, int b)
+        {
+            return 0;
+        }
+    }
     public class LinksRepositoryTests
     {
         private List<Link> _data = new List<Link>
@@ -160,7 +167,7 @@ namespace UnitTests.Infrastructure
             Link newLink = new Link
             {
                 LongUrl = "test",
-                ShortUrl = "test",            
+                ShortUrl = "test",
                 Owner = null,
             };
             using (var context = GetContext(name))
@@ -188,7 +195,7 @@ namespace UnitTests.Infrastructure
             Link newLink = new Link
             {
                 LongUrl = "test",
-                ShortUrl = "test",            
+                ShortUrl = "test",
                 Owner = null,
             };
             using (var context = GetContext(name))
@@ -197,8 +204,39 @@ namespace UnitTests.Infrastructure
                 newLink.LongUrl = null;
                 Action act = () => service.CreateOne(newLink);
                 act.ShouldThrow<PropertyIsMissingException>();
+                newLink.LongUrl = "test";
+                newLink.ShortUrl = "g";
+                act.ShouldThrow<DuplicateEntryException>();
             }
         }
+
+        [Fact]
+        public void GenerateRandomShortLink()
+        {
+            string name = "Create_Single_Throws";
+            PopulateDB(name);
+
+            using (var context = GetContext(name))
+            {
+                var service = new LinksRepository(context, new MockRandom());
+                Link link = service.CreateOne(new Link
+                {
+                    LongUrl = "test",
+                    ShortUrl = null,
+                    Owner = null,
+                });
+                link.ShortUrl.Should().Be("aaa");
+
+                link = service.CreateOne(new Link
+                {
+                    LongUrl = "test",
+                    ShortUrl = null,
+                    Owner = null,
+                });
+                link.ShortUrl.Should().Be("aaaa");
+            }
+        }
+
         [Fact]
         public void DeleteSingleLink()
         {
