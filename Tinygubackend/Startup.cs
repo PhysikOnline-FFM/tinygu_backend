@@ -39,6 +39,7 @@ namespace Tinygubackend
         options.UseMySql(Configuration.GetConnectionString("Tinygu")));
 
       services.AddTransient<ILinksRepository, LinksRepository>();
+      services.AddTransient<IUserRepository, UserRepository>();
 
       services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
         .AllowAnyMethod()

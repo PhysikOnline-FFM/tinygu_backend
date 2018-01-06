@@ -74,8 +74,7 @@ namespace Tinygubackend.Controllers
             }
             catch (Exception e) when (e is IdNotFoundException || e is PropertyIsMissingException)
             {
-                SetHttpStatusCode(HttpStatusCode.BadRequest);
-                return Json(ErrorMessage(e.Message));
+                return BadRequest(ErrorMessage(e.Message));
             }
             catch (DbUpdateException e)
             {
@@ -101,15 +100,14 @@ namespace Tinygubackend.Controllers
             {
                 return Json(_linksService.CreateOne(newLink));
             }
+            catch (DuplicateEntryException e)
+            {
+                return BadRequest(ErrorMessage(e.Message));
+            }
             catch (DbUpdateException e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
                 return Json(ErrorMessage(e.InnerException.Message));
-            }
-            catch (DuplicateEntryException e)
-            {
-                SetHttpStatusCode(HttpStatusCode.BadRequest);
-                return Json(ErrorMessage(e.Message));
             }
             catch (Exception e)
             {
@@ -133,8 +131,7 @@ namespace Tinygubackend.Controllers
             }
             catch (IdNotFoundException e)
             {
-                SetHttpStatusCode(HttpStatusCode.BadRequest);
-                return Json(ErrorMessage(e.Message));
+                return BadRequest(ErrorMessage(e.Message));
             }
             catch (DbUpdateException e)
             {
