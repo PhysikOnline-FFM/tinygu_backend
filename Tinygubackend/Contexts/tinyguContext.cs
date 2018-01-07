@@ -26,6 +26,7 @@ namespace Tinygubackend.Contexts
                 entity.Property(l => l.ShortUrl).HasMaxLength(100);
             });
             modelBuilder.Entity<User>().HasIndex(u => u.Name).IsUnique();
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(u => u.Name).HasMaxLength(100);
@@ -54,6 +55,14 @@ namespace Tinygubackend.Contexts
             foreach (var addedEntity in addedEntities)
             {
                 ((Base)addedEntity.Entity).DateCreated = DateTime.UtcNow;
+            }
+
+            var modifiedEntities = ChangeTracker.Entries()
+                .Where(e => e.Entity is Base && e.State == EntityState.Modified);
+
+            foreach (var addedEntity in modifiedEntities)
+            {
+                ((Base)addedEntity.Entity).DateModified = DateTime.UtcNow;
             }
         }
     }

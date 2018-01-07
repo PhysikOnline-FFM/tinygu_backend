@@ -11,9 +11,10 @@ using Tinygubackend.Contexts;
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    partial class TinyguContextModelSnapshot : ModelSnapshot
+    [Migration("20180107220943_MadeEmailUniqueForUser")]
+    partial class MadeEmailUniqueForUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,8 +27,6 @@ namespace Tinygubackend.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("DateModified");
 
                     b.Property<string>("LongUrl");
 
@@ -52,10 +51,6 @@ namespace Tinygubackend.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("DateLogin");
-
-                    b.Property<DateTime>("DateModified");
 
                     b.Property<string>("Email");
 

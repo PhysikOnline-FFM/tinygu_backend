@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Tinygubackend.Contexts;
 using Tinygubackend.Models;
@@ -9,8 +10,8 @@ namespace Tinygubackend.Infrastructure
 {
     public interface IUserRepository
     {
-        List<User> GetAll();
-        User GetSingle(int id);
+        Task<List<User>> GetAll();
+        Task<User> GetSingle(int id);
         User GetSingle(string userName, string password);
         User UpdateOne(User updatedUser);
         User CreateOne(User newUser);
@@ -35,14 +36,14 @@ namespace Tinygubackend.Infrastructure
             throw new NotImplementedException();
         }
 
-        public List<User> GetAll()
+        public async Task<List<User>> GetAll()
         {
-            return _tinyguContext.Users.Include(u => u.Links).ToList();
+            return await _tinyguContext.Users.Include(u => u.Links).ToListAsync();
         }
 
-        public User GetSingle(int id)
+        public async Task<User> GetSingle(int id)
         {
-            throw new NotImplementedException();
+            return await _tinyguContext.Users.Include(u => u.Links).SingleOrDefaultAsync(_ => _.Id == id);
         }
 
         public User GetSingle(string userName, string password)

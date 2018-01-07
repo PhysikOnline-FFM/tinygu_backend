@@ -11,9 +11,10 @@ using Tinygubackend.Contexts;
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    partial class TinyguContextModelSnapshot : ModelSnapshot
+    [Migration("20180107221318_AddedDateLoginToUserAndDateModified")]
+    partial class AddedDateLoginToUserAndDateModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

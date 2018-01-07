@@ -11,9 +11,10 @@ using Tinygubackend.Contexts;
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    partial class TinyguContextModelSnapshot : ModelSnapshot
+    [Migration("20180107220422_AddedPasswordAndEmailToUser")]
+    partial class AddedPasswordAndEmailToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,8 +27,6 @@ namespace Tinygubackend.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("DateModified");
 
                     b.Property<string>("LongUrl");
 
@@ -53,10 +52,6 @@ namespace Tinygubackend.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
-                    b.Property<DateTime>("DateLogin");
-
-                    b.Property<DateTime>("DateModified");
-
                     b.Property<string>("Email");
 
                     b.Property<string>("Name")
@@ -65,9 +60,6 @@ namespace Tinygubackend.Migrations
                     b.Property<string>("Password");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("Name")
                         .IsUnique();
