@@ -67,7 +67,7 @@ namespace UnitTests.Infrastructure
         }
 
         [Fact]
-        public void GetsAllUsers()
+        public async void GetsAllUsers()
         {
             string name = "Get_All_Users";
             PopulateDB(name);
@@ -75,12 +75,27 @@ namespace UnitTests.Infrastructure
             using (var context = GetContext(name))
             {
                 var service = new UserRepository(context);
-                var users = service.GetAll();
+                var users = await service.GetAll();
                 users.Count.Should().Be(_data.Count);
                 for (int i = 0; i < _data.Count; i++)
                 {
-                    //users[i].ShouldBeEquivalentTo(_data[i]);
+                    users[i].ShouldBeEquivalentTo(_data[i], options => options.Excluding(_ => _.Links));
                 }
+            }
+        }
+
+        [Fact]
+        public async void GetsSingleUser()
+        {
+            string name = "Get_Single_User";
+            PopulateDB(name);
+
+            using (var context = GetContext(name))
+            {
+                var service = new UserRepository(context);
+                int id = context.Users.SingleOrDefault(_ => _.Name == "Test Name").Id;
+                User user = await service.GetSingle(id);
+                user.ShouldBeEquivalentTo(_data[0]);
             }
         }
     }

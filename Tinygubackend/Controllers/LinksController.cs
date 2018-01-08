@@ -31,7 +31,7 @@ namespace Tinygubackend.Controllers
         /// </summary>
         /// <returns>List</returns>
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult GetAll()
         {
             return Json(_linksService.GetAll());
         }
@@ -50,7 +50,11 @@ namespace Tinygubackend.Controllers
             }
             catch (IdNotFoundException e)
             {
-                SetHttpStatusCode(HttpStatusCode.BadRequest);
+                return BadRequest(ErrorMessage(e.Message));
+            }
+            catch (Exception e)
+            {
+                SetHttpStatusCode(HttpStatusCode.InternalServerError);
                 return Json(ErrorMessage(e.Message));
             }
         }
@@ -70,8 +74,7 @@ namespace Tinygubackend.Controllers
             }
             catch (Exception e) when (e is IdNotFoundException || e is PropertyIsMissingException)
             {
-                SetHttpStatusCode(HttpStatusCode.BadRequest);
-                return Json(ErrorMessage(e.Message));
+                return BadRequest(ErrorMessage(e.Message));
             }
             catch (DbUpdateException e)
             {
@@ -97,15 +100,14 @@ namespace Tinygubackend.Controllers
             {
                 return Json(_linksService.CreateOne(newLink));
             }
+            catch (DuplicateEntryException e)
+            {
+                return BadRequest(ErrorMessage(e.Message));
+            }
             catch (DbUpdateException e)
             {
                 SetHttpStatusCode(HttpStatusCode.InternalServerError);
                 return Json(ErrorMessage(e.InnerException.Message));
-            }
-            catch (DuplicateEntryException e)
-            {
-                SetHttpStatusCode(HttpStatusCode.BadRequest);
-                return Json(ErrorMessage(e.Message));
             }
             catch (Exception e)
             {
@@ -127,10 +129,9 @@ namespace Tinygubackend.Controllers
                 _linksService.DeleteOne(id);
                 return StatusCode(200);
             }
-            catch (KeyNotFoundException e)
+            catch (IdNotFoundException e)
             {
-                SetHttpStatusCode(HttpStatusCode.BadRequest);
-                return Json(ErrorMessage(e.Message));
+                return BadRequest(ErrorMessage(e.Message));
             }
             catch (DbUpdateException e)
             {
