@@ -124,13 +124,13 @@ namespace UnitTests.Infrastructure
                 updateLink.Id = context.Links.Last().Id;
                 var link = service.UpdateOne(updateLink);
                 link.ShouldBeEquivalentTo(updateLink, options =>
-                    options.Excluding(o => o.DateCreated));
+                    options.Excluding(o => o.DateCreated).Excluding(o => o.DateModified));
             }
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
                 service.GetSingle(updateLink.Id).ShouldBeEquivalentTo(updateLink, options =>
-                    options.Excluding(o => o.DateCreated));
+                    options.Excluding(o => o.DateCreated).Excluding(o => o.DateModified));
             }
         }
 

@@ -55,6 +55,7 @@ namespace Tinygubackend.Contexts
             foreach (var addedEntity in addedEntities)
             {
                 ((Base)addedEntity.Entity).DateCreated = DateTime.UtcNow;
+                ((Base)addedEntity.Entity).DateModified = DateTime.UtcNow;
             }
 
             var modifiedEntities = ChangeTracker.Entries()

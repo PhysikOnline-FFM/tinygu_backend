@@ -11,8 +11,8 @@ using Tinygubackend.Contexts;
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    [Migration("20180107221318_AddedDateLoginToUserAndDateModified")]
-    partial class AddedDateLoginToUserAndDateModified
+    [Migration("20180108225248_INIT")]
+    partial class INIT
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
