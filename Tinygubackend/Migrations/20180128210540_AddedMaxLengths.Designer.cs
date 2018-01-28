@@ -11,40 +11,15 @@ using Tinygubackend.Contexts;
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    partial class TinyguContextModelSnapshot : ModelSnapshot
+    [Migration("20180128210540_AddedMaxLengths")]
+    partial class AddedMaxLengths
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
-
-            modelBuilder.Entity("Tinygubackend.Models.Group", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("AccessControl")
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("DateModified");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(50);
-
-                    b.Property<int>("OwnerId");
-
-                    b.Property<int?>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Groups");
-                });
 
             modelBuilder.Entity("Tinygubackend.Models.Link", b =>
                 {
@@ -55,8 +30,6 @@ namespace Tinygubackend.Migrations
 
                     b.Property<DateTime>("DateModified");
 
-                    b.Property<int?>("GroupId");
-
                     b.Property<string>("LongUrl")
                         .HasMaxLength(500);
 
@@ -66,8 +39,6 @@ namespace Tinygubackend.Migrations
                         .HasMaxLength(50);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
 
                     b.HasIndex("OwnerId");
 
@@ -108,19 +79,8 @@ namespace Tinygubackend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Tinygubackend.Models.Group", b =>
-                {
-                    b.HasOne("Tinygubackend.Models.User")
-                        .WithMany("Groups")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("Tinygubackend.Models.Link", b =>
                 {
-                    b.HasOne("Tinygubackend.Models.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId");
-
                     b.HasOne("Tinygubackend.Models.User", "Owner")
                         .WithMany("Links")
                         .HasForeignKey("OwnerId");
