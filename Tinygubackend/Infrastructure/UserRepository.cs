@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Tinygubackend.Contexts;
 using Tinygubackend.Models;
 using Tinygubackend.Services;
-using Tinygubackend.Core.Exceptions;
+using Tinygubackend.Common.Exceptions;
 
 namespace Tinygubackend.Infrastructure
 {
@@ -50,8 +50,11 @@ namespace Tinygubackend.Infrastructure
         private async Task SetLoginTime(string userName)
         {
             User user = await _tinyguContext.Users.SingleOrDefaultAsync(_ => _.Name == userName);
-            user.DateLogin = DateTime.Now;
-            await _tinyguContext.SaveChangesAsync();
+            if (user != null)
+            {
+                user.DateLogin = DateTime.Now;
+                await _tinyguContext.SaveChangesAsync();
+            }
         }
 
         public async Task<User> CreateOne(User newUser)
@@ -80,7 +83,13 @@ namespace Tinygubackend.Infrastructure
 
         public async Task DeleteOne(int id)
         {
-            throw new NotImplementedException();
+            User user = await GetSingle(id);
+            if (user == null)
+            {
+                throw new IdNotFoundException($"Could not find user with id {id}!");
+            }
+            _tinyguContext.Remove(user);
+            await _tinyguContext.SaveChangesAsync();
         }
 
         public async Task<List<User>> GetAll()
@@ -90,12 +99,23 @@ namespace Tinygubackend.Infrastructure
 
         public async Task<User> GetSingle(int id)
         {
-            return await _tinyguContext.Users.Include(u => u.Links).SingleOrDefaultAsync(_ => _.Id == id);
+            User user = await _tinyguContext.Users.Include(u => u.Links).SingleOrDefaultAsync(_ => _.Id == id);
+            if (user == null)
+            {
+                throw new IdNotFoundException();
+            }
+            return user;
         }
 
         public async Task<User> UpdateOne(User updatedUser)
         {
-            throw new NotImplementedException();
+            User user = await GetSingle(updatedUser.Id);
+            user.Links = updatedUser.Links;
+            user.FirstName = updatedUser.FirstName;
+            user.LastName = updatedUser.LastName;
+            user.Groups = updatedUser.Groups;
+            await _tinyguContext.SaveChangesAsync();
+            return user;
         }
 
         private async Task<bool> DoesUserExist(Func<User, bool> predicate)

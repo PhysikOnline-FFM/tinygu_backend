@@ -8,7 +8,7 @@ using Tinygubackend.Contexts;
 using Tinygubackend.Models;
 using Tinygubackend.Infrastructure;
 using Xunit;
-using Tinygubackend.Core.Exceptions;
+using Tinygubackend.Common.Exceptions;
 
 namespace UnitTests.Infrastructure
 {

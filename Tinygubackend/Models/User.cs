@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Tinygubackend.Common;
 #pragma warning disable 1591
 namespace Tinygubackend.Models
 {
@@ -14,8 +15,8 @@ namespace Tinygubackend.Models
         [MaxLength(50)]
         public string LastName { get; set; }
 
-        [MaxLength(50)]
-        public string Role { get; set; }
+        [Required]
+        public Role UserRole { get; set; }
 
         [MaxLength(100)]
         public string Password { get; set; }

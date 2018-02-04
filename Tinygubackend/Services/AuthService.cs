@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Tinygubackend.Contexts;
-using Tinygubackend.Core.Exceptions;
+using Tinygubackend.Common.Exceptions;
 using Tinygubackend.Models;
 
 namespace Tinygubackend.Services
@@ -44,11 +44,11 @@ namespace Tinygubackend.Services
                 throw new EntityNotFoundException("Could not find user!");
             }
 
-            var claims = new []
+            var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Name),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Typ, user.Role),
+                new Claim(JwtRegisteredClaimNames.Typ, user.UserRole.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -56,8 +56,8 @@ namespace Tinygubackend.Services
             {
                 var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                     _config["Jwt:Issuer"],
-                    expires : DateTime.Now.AddMinutes(30),
-                    signingCredentials : creds);
+                    expires: DateTime.Now.AddMinutes(30),
+                    signingCredentials: creds);
                 Token = new JwtSecurityTokenHandler().WriteToken(token);
                 return;
             }

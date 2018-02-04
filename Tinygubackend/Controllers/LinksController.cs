@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Tinygubackend;
 using Tinygubackend.Models;
 using Tinygubackend.Infrastructure;
-using Tinygubackend.Core.Exceptions;
+using Tinygubackend.Common.Exceptions;
 
 namespace Tinygubackend.Controllers
 {
@@ -152,7 +152,7 @@ namespace Tinygubackend.Controllers
 
         private object ErrorMessage(string error)
         {
-            return new {error};
+            return new { error };
         }
     }
 }
