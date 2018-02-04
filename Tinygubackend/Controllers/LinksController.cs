@@ -10,6 +10,7 @@ using Tinygubackend;
 using Tinygubackend.Models;
 using Tinygubackend.Infrastructure;
 using Tinygubackend.Common.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Tinygubackend.Controllers
 {
@@ -65,7 +66,7 @@ namespace Tinygubackend.Controllers
         /// <param name="updatedLink"></param>
         /// <param name="id">Id of this Link</param>
         /// <returns>The updated Link</returns>
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize]
         public IActionResult UpdateLink([FromBody] Link updatedLink, int id)
         {
             try
@@ -121,7 +122,7 @@ namespace Tinygubackend.Controllers
         /// </summary>
         /// <param name="id">Id of this Link</param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public IActionResult DeleteLink(int id)
         {
             try
