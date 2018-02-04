@@ -1,37 +1,84 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Tinygubackend.Contexts;
 using Tinygubackend.Models;
+using Tinygubackend.Services;
+using Tinygubackend.Core.Exceptions;
 
 namespace Tinygubackend.Infrastructure
 {
     public interface IUserRepository
     {
+        Task<AuthReturnInfo> Authorize(string userName, string password);
         Task<List<User>> GetAll();
         Task<User> GetSingle(int id);
-        User GetSingle(string userName, string password);
-        User UpdateOne(User updatedUser);
-        User CreateOne(User newUser);
-        void DeleteOne(int id);
+        Task<User> UpdateOne(User updatedUser);
+        Task<User> CreateOne(User newUser);
+        Task DeleteOne(int id);
+    }
+
+    public struct AuthReturnInfo
+    {
+        public string Token { get; set; }
+
     }
     public class UserRepository : IUserRepository
     {
         private readonly TinyguContext _tinyguContext;
+        private readonly IAuthService _authService;
 
-        public UserRepository(TinyguContext tinyguContext)
+        public UserRepository(TinyguContext tinyguContext, IAuthService authService)
         {
             _tinyguContext = tinyguContext;
+            _authService = authService;
         }
 
-        public User CreateOne(User newUser)
+        public async Task<AuthReturnInfo> Authorize(string userName, string password)
         {
-            throw new NotImplementedException();
+            // TODO add LDAP
+            await _authService.Authorize(userName, password);
+            await SetLoginTime(userName);
+            return new AuthReturnInfo
+            {
+                Token = _authService.Token,
+            };
         }
 
-        public void DeleteOne(int id)
+        private async Task SetLoginTime(string userName)
+        {
+            User user = await _tinyguContext.Users.SingleOrDefaultAsync(_ => _.Name == userName);
+            user.DateLogin = DateTime.Now;
+            await _tinyguContext.SaveChangesAsync();
+        }
+
+        public async Task<User> CreateOne(User newUser)
+        {
+            if (
+                String.IsNullOrEmpty(newUser.Email)
+                || String.IsNullOrEmpty(newUser.Password)
+                || String.IsNullOrEmpty(newUser.Name)
+            )
+            {
+                throw new PropertyIsMissingException();
+            }
+            if (await DoesUserExist(_ => _.Name == newUser.Name))
+            {
+                throw new DuplicateEntryException("Name already exists!");
+            }
+            if (await DoesUserExist(_ => _.Email == newUser.Email))
+            {
+                throw new DuplicateEntryException("Email already exists!");
+            }
+            newUser.Password = AuthService.HashPassword(newUser.Password);
+            _tinyguContext.Users.Add(newUser);
+            await _tinyguContext.SaveChangesAsync();
+            return newUser;
+        }
+
+        public async Task DeleteOne(int id)
         {
             throw new NotImplementedException();
         }
@@ -46,14 +93,15 @@ namespace Tinygubackend.Infrastructure
             return await _tinyguContext.Users.Include(u => u.Links).SingleOrDefaultAsync(_ => _.Id == id);
         }
 
-        public User GetSingle(string userName, string password)
+        public async Task<User> UpdateOne(User updatedUser)
         {
             throw new NotImplementedException();
         }
 
-        public User UpdateOne(User updatedUser)
+        private async Task<bool> DoesUserExist(Func<User, bool> predicate)
         {
-            throw new NotImplementedException();
+            User testUser = await _tinyguContext.Users.SingleOrDefaultAsync(user => predicate(user));
+            return testUser != null;
         }
     }
 }

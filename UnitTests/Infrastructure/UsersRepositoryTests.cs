@@ -1,12 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using System.Collections.Generic;
+using System.Linq;
 using Tinygubackend.Contexts;
 using Tinygubackend.Infrastructure;
 using Tinygubackend.Models;
+using Tinygubackend.Services;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace UnitTests.Infrastructure
 {
@@ -17,20 +20,20 @@ namespace UnitTests.Infrastructure
             new User
             {
                 Name = "Test Name",
-                Links = new List<Link>()
+                Links = new List<Link>(),
             },
             new User
             {
                 Name = "Test Name2",
                 Links = new List<Link>
                 {
-                    new Link
-                    {
-                        LongUrl = "google.com2",
-                        ShortUrl = "g2",
-                        Owner = null,
-                        DateCreated = DateTime.Parse("2017-11-08T12:07:55.323428")
-                    }
+                new Link
+                {
+                    LongUrl = "google.com2",
+                    ShortUrl = "g2",
+                    Owner = null,
+                    DateCreated = DateTime.Parse("2017-11-08T12:07:55.323428")
+                }
                 }
             },
             new User
@@ -50,6 +53,15 @@ namespace UnitTests.Infrastructure
                 DateCreated = DateTime.Parse("2017-11-08T12:07:55.323428")
             }
         };
+
+        private IAuthService _authService;
+
+        public UsersRepositoryTests()
+        {
+            Mock<IAuthService> authService = new Mock<IAuthService>();
+            authService.SetupGet(x => x.Token).Returns("token");
+            _authService = authService.Object;
+        }
 
         private TinyguContext GetContext(string databaseName)
         {
@@ -74,7 +86,7 @@ namespace UnitTests.Infrastructure
 
             using (var context = GetContext(name))
             {
-                var service = new UserRepository(context);
+                var service = new UserRepository(context, _authService);
                 var users = await service.GetAll();
                 users.Count.Should().Be(_data.Count);
                 for (int i = 0; i < _data.Count; i++)
@@ -92,10 +104,48 @@ namespace UnitTests.Infrastructure
 
             using (var context = GetContext(name))
             {
-                var service = new UserRepository(context);
+                var service = new UserRepository(context, _authService);
                 int id = context.Users.SingleOrDefault(_ => _.Name == "Test Name").Id;
                 User user = await service.GetSingle(id);
                 user.ShouldBeEquivalentTo(_data[0]);
+            }
+        }
+
+        [Fact]
+        public async void AuthorizesUser()
+        {
+            string name = "Authorize_User";
+            PopulateDB(name);
+
+            using (var context = GetContext(name))
+            {
+                var service = new UserRepository(context, _authService);
+                var result = service.Authorize("user", "password").Result;
+                result.Token.Should().Be("token");
+            }
+        }
+
+        [Fact]
+        public async void CreatesOneUser()
+        {
+            string name = "Creates_User";
+            PopulateDB(name);
+
+            using (var context = GetContext(name))
+            {
+                var service = new UserRepository(context, _authService);
+                User newUser = new User
+                {
+                    Name = "New User",
+                    Email = "Email",
+                    Password = "password"
+                };
+                User createdUser = await service.CreateOne(newUser);
+            }
+
+            using (var context = GetContext(name))
+            {
+                context.Users.ToList().Count().Should().Be(_data.Count() + 1);
             }
         }
     }
