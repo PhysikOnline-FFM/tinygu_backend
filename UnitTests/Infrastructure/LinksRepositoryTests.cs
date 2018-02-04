@@ -8,7 +8,7 @@ using Tinygubackend.Contexts;
 using Tinygubackend.Models;
 using Tinygubackend.Infrastructure;
 using Xunit;
-using Tinygubackend.Core.Exceptions;
+using Tinygubackend.Common.Exceptions;
 
 namespace UnitTests.Infrastructure
 {
@@ -100,7 +100,6 @@ namespace UnitTests.Infrastructure
             using (var context = GetContext(name))
             {
                 var service = new LinksRepository(context);
-                Console.WriteLine(context.Links.Count());
                 Action act = () => service.GetSingle(context.Links.Last().Id + 1);
                 act.ShouldThrow<IdNotFoundException>();
             }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Tinygubackend.Controllers;
-using Tinygubackend.Core.Exceptions;
+using Tinygubackend.Common.Exceptions;
 using Tinygubackend.Infrastructure;
 using Tinygubackend.Models;
 using Xunit;

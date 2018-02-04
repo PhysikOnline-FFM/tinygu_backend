@@ -11,6 +11,8 @@ namespace Tinygubackend.Contexts
     {
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Link> Links { get; set; }
+        public virtual DbSet<Group> Groups { get; set; }
+
 
         public TinyguContext(DbContextOptions<TinyguContext> options)
             : base(options)
@@ -23,13 +25,11 @@ namespace Tinygubackend.Contexts
             modelBuilder.Entity<Link>().HasIndex(l => l.ShortUrl).IsUnique();
             modelBuilder.Entity<Link>(entity =>
             {
-                entity.Property(l => l.ShortUrl).HasMaxLength(100);
             });
             modelBuilder.Entity<User>().HasIndex(u => u.Name).IsUnique();
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<User>(entity =>
             {
-                entity.Property(u => u.Name).HasMaxLength(100);
             });
 
             base.OnModelCreating(modelBuilder);

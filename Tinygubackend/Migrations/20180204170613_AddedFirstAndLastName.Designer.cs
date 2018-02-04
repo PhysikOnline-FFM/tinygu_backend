@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
-using Tinygubackend.Common;
 using Tinygubackend.Contexts;
 
 namespace Tinygubackend.Migrations
 {
     [DbContext(typeof(TinyguContext))]
-    partial class TinyguContextModelSnapshot : ModelSnapshot
+    [Migration("20180204170613_AddedFirstAndLastName")]
+    partial class AddedFirstAndLastName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,7 +104,8 @@ namespace Tinygubackend.Migrations
                     b.Property<string>("Password")
                         .HasMaxLength(100);
 
-                    b.Property<int>("UserRole");
+                    b.Property<string>("Role")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
