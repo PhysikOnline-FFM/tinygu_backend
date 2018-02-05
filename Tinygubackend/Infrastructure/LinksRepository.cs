@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tinygubackend.Contexts;
-using Tinygubackend.Core.Exceptions;
+using Tinygubackend.Common.Exceptions;
 using Tinygubackend.Models;
 
 namespace Tinygubackend.Infrastructure
@@ -27,7 +27,7 @@ namespace Tinygubackend.Infrastructure
 
         private class DefaultRandom : IRandomGenerator
         {
-            public int Next(int a, int b) 
+            public int Next(int a, int b)
             {
                 return (new Random()).Next(a, b);
             }
@@ -36,7 +36,7 @@ namespace Tinygubackend.Infrastructure
         public LinksRepository(TinyguContext tinyguContext, IRandomGenerator random = null)
         {
             _tinyguContext = tinyguContext;
-            _random = random?? new DefaultRandom();
+            _random = random ?? new DefaultRandom();
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Tinygubackend.Infrastructure
                 }
                 length++;
             } while (DoesShortUrlAlreadyExists(result));
-            
+
             return result;
         }
 

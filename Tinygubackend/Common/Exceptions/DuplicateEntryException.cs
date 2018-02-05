@@ -1,4 +1,4 @@
-namespace Tinygubackend.Core.Exceptions
+namespace Tinygubackend.Common.Exceptions
 {
     [System.Serializable]
     public class DuplicateEntryException : System.Exception

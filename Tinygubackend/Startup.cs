@@ -1,16 +1,20 @@
 ﻿using System;
-using System.IO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
+using System.IO;
+using System.Text;
 using Tinygubackend;
 using Tinygubackend.Contexts;
-using Tinygubackend.Models;
 using Tinygubackend.Infrastructure;
+using Tinygubackend.Models;
+using Tinygubackend.Services;
 
 #pragma warning disable 1591
 
@@ -22,8 +26,8 @@ namespace Tinygubackend
     {
       var builder = new ConfigurationBuilder()
         .SetBasePath(env.ContentRootPath)
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+        .AddJsonFile("appsettings.json", optional : false, reloadOnChange : true)
+        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional : true)
         .AddEnvironmentVariables();
       Configuration = builder.Build();
     }
@@ -33,6 +37,20 @@ namespace Tinygubackend
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+          options.TokenValidationParameters = new TokenValidationParameters
+          {
+          ValidateIssuer = true,
+          ValidateAudience = true,
+          ValidateLifetime = true,
+          ValidateIssuerSigningKey = true,
+          ValidIssuer = Configuration["Jwt:Issuer"],
+          ValidAudience = Configuration["Jwt:Issuer"],
+          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+          };
+        });
       // Add framework services.
       services.AddMvc();
       services.AddDbContext<TinyguContext>(options =>
@@ -40,6 +58,7 @@ namespace Tinygubackend
 
       services.AddTransient<ILinksRepository, LinksRepository>();
       services.AddTransient<IUserRepository, UserRepository>();
+      services.AddTransient<IAuthService, AuthService>();
 
       services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
         .AllowAnyMethod()
@@ -49,6 +68,11 @@ namespace Tinygubackend
       // Register the Swagger generator, defining one or more Swagger documents
       services.AddSwaggerGen(c =>
       {
+        c.AddSecurityDefinition("jwt", new ApiKeyScheme
+        {
+          Name = "Authorization",
+            In = "header"
+        });
         c.SwaggerDoc("v1", new Info { Title = "Tinygu", Version = "v1" });
 
         // Set the comments path for the Swagger JSON and UI.
@@ -73,6 +97,8 @@ namespace Tinygubackend
       {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tinygu V1");
       });
+
+      app.UseAuthentication();
 
       app.UseCors("AllowAll");
 
