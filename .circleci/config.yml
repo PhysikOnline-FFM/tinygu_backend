@@ -27,7 +27,7 @@ jobs:
       - run: git remote add dokku dokku@poc3.itp.uni-frankfurt.de:tinygu-staging-api
       - run: 
           name: Pushing to dokku
-          command: git push dokku master
+          command: git push -f dokku master
 
 workflows:
   version: 2
